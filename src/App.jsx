@@ -1,16 +1,49 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Test from "./components/Test";
-import { WrapperLayout } from "./Layouts/Wrapper";
+import React from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useMenu } from "./hooks/useMenu";
 
 const App = () => {
-  const { locale } = useMenu();
-  console.log(locale)
+  const { menuData } = useMenu();
+  console.log(menuData);
+
   return (
     <BrowserRouter>
+      <nav>
+        <ul>
+          {menuData.map((menu) => (
+            <li key={menu.lang}>
+              <Link to={`/${menu.lang}`}>{menu.lang}</Link>
+              <ul>
+                {menu.data.map((element) => (
+                  <li key={element.id}>
+                    <Link to={`/${menu.lang}/${element.attributes.slug}`}>
+                      {element.attributes.nombre}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       <Routes>
-        <Route path="/" element={<WrapperLayout />}></Route>
+        {menuData.map((menu) => (
+          <Route
+            key={menu.lang}
+            path={`/${menu.lang}`}
+            element={<h1>{menu.nombre}</h1>}
+          >
+            {menu.data.map((element) => (
+              <Route
+                key={element.id}
+                path={`${element.attributes.slug}`}
+                element={<h2>{element.attributes.nombre}</h2>}
+              />
+            ))}
+          </Route>
+        ))}
+        <Route path="/" element={<h1>Home</h1>} />
       </Routes>
     </BrowserRouter>
   );

@@ -5,7 +5,9 @@ const MenuContext = createContext();
 
 export const MenuProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [menuData, setMenuData] = useState(() => JSON.parse(localStorage.getItem("menuData")) || []);
+  const [menuData, setMenuData] = useState(
+    () => JSON.parse(localStorage.getItem("menuData")) || []
+  );
 
   const lang = () => {
     const config = {
@@ -22,7 +24,7 @@ export const MenuProvider = ({ children }) => {
         "Content-Type": "application/json",
       },
       params: {
-        locale : language,
+        locale: language,
       },
     };
     return ApiBackend("api/menus", config);
