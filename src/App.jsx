@@ -1,13 +1,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { MenuProvider } from "./Context/MenuProvider";
+
 import Test from "./components/Test";
+import { WrapperLayout } from "./Layouts/Wrapper";
+import { useMenu } from "./hooks/useMenu";
 
 const App = () => {
+  const { locale } = useMenu();
+  console.log(locale)
   return (
     <BrowserRouter>
-      <MenuProvider>
-        <Test />
-      </MenuProvider>
+      <Routes>
+        <Route path="/" element={<WrapperLayout />}></Route>
+      </Routes>
     </BrowserRouter>
   );
 };

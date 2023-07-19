@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import useMenu from "../hooks/useMenu";
 const Test = () => {
   const [test, setTest] = useState(null);
-  const { getLang } = useMenu();
+  const { locale } = useMenu();
   
-  console.log(test)
+  console.log(locale, "Test")
   return <div>Test</div>;
 };
 

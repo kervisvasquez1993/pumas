@@ -5,8 +5,7 @@ const MenuContext = createContext();
 
 export const MenuProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [locale, setLocale] = useState([]);
-  const [menu, setMenu] = useState([]);
+  const [menuData, setMenuData] = useState(() => JSON.parse(localStorage.getItem("menuData")) || []);
 
   const lang = () => {
     const config = {
@@ -16,39 +15,70 @@ export const MenuProvider = ({ children }) => {
     };
     return ApiBackend("api/i18n/locales", config);
   };
-  const getMenus = (languaje) => {
+
+  const getMenus = (language) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
       },
       params: {
-        languaje,
+        locale : language,
       },
     };
     return ApiBackend("api/menus", config);
   };
 
+  const fetchMenusByLanguage = async (languages) => {
+    const menuData = [];
+
+    for (const language of languages) {
+      const menusResponse = await getMenus(language.code);
+      const menu = menusResponse.data.data;
+
+      menuData.push({ lang: language.code, data: menu });
+    }
+
+    return menuData;
+  };
+
+  const getMenuData = async () => {
+    const langResponse = await lang();
+    const languages = langResponse.data;
+
+    const menuData = await fetchMenusByLanguage(languages);
+
+    return menuData;
+  };
+
   useEffect(() => {
     (async () => {
       try {
-        const [menusResponse, langResponse] = await Promise.all([
-          getMenus(locale),
-          lang(),
-        ]);
-        const menusData = menusResponse.data;
-        const langData = langResponse.data;
+        let storedMenuData = JSON.parse(localStorage.getItem("menuData"));
+        let menuData = [];
 
-        console.log(menusData, "menu");
-        console.log(langData, "lang");
-        setMenu(data.data);
+        // Obtener datos del localStorage si están disponibles
+        if (storedMenuData) {
+          setMenuData(storedMenuData);
+          setLoading(false);
+          return;
+        }
+
+        // Obtener datos de la API
+        menuData = await getMenuData();
+
+        // Almacenar en el localStorage
+        localStorage.setItem("menuData", JSON.stringify(menuData));
+
+        setMenuData(menuData);
       } catch (error) {
         console.log(error);
       }
       setLoading(false);
     })();
   }, []);
+
   return (
-    <MenuContext.Provider value={{ loading, menu }}>
+    <MenuContext.Provider value={{ loading, menuData }}>
       {children}
     </MenuContext.Provider>
   );
