@@ -1,6 +1,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useMenu } from "./hooks/useMenu";
+import AllPageComponents from "./components/Pages/AllPageComponents";
+import ListLang from "./components/Views/ListLang";
+import IndexPageComponents from "./components/Pages/IndexPageComponents";
+import { WrapperLayout } from "./Layouts/Wrapper";
 
 const App = () => {
   const { menuData } = useMenu();
@@ -8,42 +12,21 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <nav>
-        <ul>
-          {menuData.map((menu) => (
-            <li key={menu.lang}>
-              <Link to={`/${menu.lang}`}>{menu.lang}</Link>
-              <ul>
-                {menu.data.map((element) => (
-                  <li key={element.id}>
-                    <Link to={`/${menu.lang}/${element.attributes.slug}`}>
-                      {element.attributes.nombre}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
       <Routes>
         {menuData.map((menu) => (
-          <Route
-            key={menu.lang}
-            path={`/${menu.lang}`}
-            element={<h1>{menu.nombre}</h1>}
-          >
-            {menu.data.map((element) => (
-              <Route
-                key={element.id}
-                path={`${element.attributes.slug}`}
-                element={<h2>{element.attributes.nombre}</h2>}
-              />
-            ))}
+          <Route key={menu.lang} path={`${menu.lang}`} element={<WrapperLayout />}>
+            {menu.data.map((element) => {
+              return (
+                <Route
+                  key={element.id}
+                  path={`${element.attributes.slug}`}
+                  element={<AllPageComponents/>}
+                />
+              );
+            })}
           </Route>
         ))}
-        <Route path="/" element={<h1>Home</h1>} />
+        <Route path="/" element={<IndexPageComponents/>} />
       </Routes>
     </BrowserRouter>
   );
