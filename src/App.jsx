@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useMenu } from "./hooks/useMenu";
 import AllPageComponents from "./components/Pages/AllPageComponents";
-import ListLang from "./components/Views/ListLang";
 import IndexPageComponents from "./components/Pages/IndexPageComponents";
 import { WrapperLayout } from "./Layouts/Wrapper";
 
